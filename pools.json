@@ -1,0 +1,21 @@
+{
+  "_comment": "The pools this storefront sells. These two are EXAMPLES, one own-stock and one decentralised, so a fresh clone shows everything working; replace them with your own pools before you ship. Address is the pool account on the OpenGacha program (mainnet). The app reads this file and learns each pool's mode from the chain. Art can be a local file under public/ or any URL; these use the pools' own listing art from opengacha.io.",
+  "pools": [
+    {
+      "slug": "mew-gacha",
+      "name": "MEW GACHA (own stock)",
+      "tagline": "Mew, Mewtwo and friends. Graded Japanese Pokemon, stocked by the creator, backed in SOL.",
+      "address": "3v25PXimtQUr48XnY85bQqVn1hxTGCAh7o9TEi8QQ9AJ",
+      "art": "https://art.tap.studio/pool-listing/3v25PXimtQUr48XnY85bQqVn1hxTGCAh7o9TEi8QQ9AJ/pack",
+      "accent": "#ff8700"
+    },
+    {
+      "slug": "decentralised-pokemon-gacha",
+      "name": "Decentralised Pokemon Gacha",
+      "tagline": "Deposit your own graded Pokemon cards and join the machine: pull, keep, cash out, relist, earn.",
+      "address": "DtyferQtZ35DCK5XQfixvUd34KCwWkPrqtHdNFDFw8Jq",
+      "art": "https://art.tap.studio/pool-listing/DtyferQtZ35DCK5XQfixvUd34KCwWkPrqtHdNFDFw8Jq/pack",
+      "accent": "#3ddc84"
+    }
+  ]
+}

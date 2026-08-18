@@ -1,0 +1,48 @@
+{
+  "name": "opengacha-opensource",
+  "version": "0.1.0",
+  "private": false,
+  "license": "MIT",
+  "description": "Open-source NFT gacha storefront on Solana: pack opening, keep or cash out, deposit and earn, on the Open Gacha Protocol. Fork it, point it at your pool, ship it.",
+  "scripts": {
+    "dev": "next dev -p 3020",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.32.1",
+    "@noble/hashes": "^1.4.0",
+    "@solana/web3.js": "^1.98.4",
+    "geist": "^1.7.2",
+    "next": "16.2.12",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^24.13.3",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  },
+  "keywords": [
+    "solana",
+    "gacha",
+    "nft",
+    "blind-box",
+    "pack-opening",
+    "tcg",
+    "pokemon",
+    "vrf",
+    "open-source",
+    "nextjs",
+    "metaplex",
+    "opengacha"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/willmexi/opengacha"
+  },
+  "homepage": "https://www.opengacha.io"
+}

@@ -1,0 +1,468 @@
+@import "tailwindcss";
+
+/*
+  OpenGacha's design language, ported from the app (apps/pool) so this
+  storefront and the protocol's own site read as one product: the same
+  tokens, the same drafting frame, the same three controls, the same
+  orange. Dark is the default; the light set is the same names behind
+  data-theme="light", which the toggle stamps on <html>.
+
+  Engine gotcha, from the handoff: never transition background-color on an
+  element whose custom properties flip with the theme — it freezes the old
+  value. The theme switch is instant.
+*/
+
+:root {
+  color-scheme: dark;
+  --bg: #080404;
+  --text: #ffffff;
+  --surface: #121010;
+  --line: #303030;
+  --hairline: rgba(255, 255, 255, 0.1);
+  --value: #d9d9d9;
+  --muted: #929292;
+  --faint: rgba(255, 255, 255, 0.46);
+  --cell: #191919;
+  --well: #0e0e0e;
+  --accent: #ff8700;
+  --accent-lit: #f6ae2d;
+  --accent-deep: #c65e00;
+  --warn: #f6ae2d;
+  --track: rgba(255, 255, 255, 0.14);
+  --backdrop: rgba(255, 255, 255, 0.07);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur: 220ms;
+  --dur-slow: 380ms;
+  --nav-h: 54px;
+  --font-sans: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Class bands, the five the protocol uses. Common is neutral. */
+  --common: #d4d4d4;
+  --uncommon: #3ddc84;
+  --rare: #4aa8ff;
+  --epic: #bc86ff;
+  --legendary: #ffb020;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --nav-h: 62px;
+  }
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #faf7f5;
+  --text: #16130f;
+  --surface: #ffffff;
+  --line: #c4bfbc;
+  --hairline: rgba(0, 0, 0, 0.1);
+  --value: #2a2622;
+  --muted: #5e635e;
+  --faint: rgba(20, 16, 12, 0.55);
+  --cell: #f0ece8;
+  --well: #efeae6;
+  --accent: #ff8700;
+  --accent-lit: #c65e00;
+  --accent-deep: #a85a00;
+  --warn: #b45309;
+  --track: rgba(0, 0, 0, 0.12);
+  --backdrop: rgba(0, 0, 0, 0.06);
+  --common: #6b6b6b;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: #ff8700;
+  color: #000;
+}
+
+:where(a, button, input, select, [tabindex]):focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* --- Type roles -------------------------------------------------------- */
+
+/* The small tracked caps every section title and column head wears. */
+.label {
+  font-family: var(--font-mono);
+  color: var(--faint);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Headings: the text face, medium, tight. Sentence case — the mono caps
+   belong to labels and controls, not to titles. */
+.heading {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+.display {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+/* Any number the eye compares against another number. */
+.figure {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+/* --- Surfaces ---------------------------------------------------------- */
+
+/* One card language: 2px corners, a hairline, a quiet surface. */
+.panel {
+  border: 1px solid var(--hairline);
+  background: var(--surface);
+  border-radius: 2px;
+}
+
+/* A panel's head: the cell tone, cut off by a hairline. */
+.panel-head {
+  background: var(--cell);
+  border-bottom: 1px solid var(--hairline);
+}
+
+/* The stage a pull happens on: the page's own well, hairlined. */
+.stage {
+  position: relative;
+  background: var(--well);
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+/* Rows sharing one hairline. */
+.rows > * + * {
+  border-top: 1px solid var(--hairline);
+}
+
+/*
+  The drafting frame: the page stands between two dashed rails, sections
+  divided by dashed rules with a plus at each crossing. Cells inside share
+  single hairlines via 1px-gap grids over a hairline ground.
+*/
+.frame {
+  border-inline: 1px dashed var(--line);
+}
+.rule {
+  position: relative;
+  border-top: 1px dashed var(--line);
+}
+.rule::before,
+.rule::after {
+  content: "+";
+  position: absolute;
+  top: -0.72em;
+  z-index: 1;
+  font-size: 14px;
+  line-height: 1;
+  color: var(--muted);
+  background: var(--bg);
+  padding: 2px;
+}
+.rule::before {
+  left: -9px;
+}
+.rule::after {
+  right: -9px;
+}
+.cells {
+  display: grid;
+  gap: 1px;
+  background: var(--hairline);
+  border: 1px solid var(--hairline);
+}
+.cells > * {
+  background: var(--bg);
+}
+.cells--surface > * {
+  background: var(--surface);
+}
+
+/* --- Controls ---------------------------------------------------------- */
+
+/* The primary: an inverse fill. The accent stays for figures and
+   moments, never for fills. */
+.btn-solid {
+  display: inline-block;
+  background: var(--text);
+  color: var(--bg);
+  border: none;
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.btn-solid:hover:not(:disabled) {
+  filter: brightness(0.92);
+}
+
+/* The ghost: a hairline and muted text. */
+.btn-ghost {
+  display: inline-block;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.btn-ghost:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--text);
+}
+
+/* The quiet one: no frame but four corner brackets. */
+.btn-corner {
+  position: relative;
+  display: inline-block;
+  background: transparent;
+  color: var(--muted);
+  border: none;
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--dur) var(--ease);
+}
+.btn-corner .c {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border: 0 solid var(--muted);
+}
+.btn-corner .c-tl { top: 0; left: 0; border-top-width: 1px; border-left-width: 1px; }
+.btn-corner .c-tr { top: 0; right: 0; border-top-width: 1px; border-right-width: 1px; }
+.btn-corner .c-bl { bottom: 0; left: 0; border-bottom-width: 1px; border-left-width: 1px; }
+.btn-corner .c-br { bottom: 0; right: 0; border-bottom-width: 1px; border-right-width: 1px; }
+.btn-corner:hover:not(:disabled) {
+  color: var(--text);
+}
+.btn-corner:hover:not(:disabled) .c {
+  border-color: var(--text);
+}
+
+.btn-solid:disabled,
+.btn-ghost:disabled,
+.btn-corner:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* Well-backed input: the field language. The border IS the focus
+   indicator — it must move visibly or a keyboard user types into the dark. */
+.input-well {
+  background: var(--well);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  color: var(--text);
+  font-family: var(--font-mono);
+  outline: none;
+}
+.input-well:focus {
+  border-color: var(--accent);
+}
+
+.nav-link {
+  color: var(--muted);
+  transition: color var(--dur) var(--ease);
+}
+.nav-link:hover {
+  color: var(--accent);
+}
+
+/* A row or panel that behaves as a control: the backdrop pill lifts. */
+.panel-hover {
+  border-radius: 2px;
+  transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.panel-hover:hover,
+.panel-hover:focus-visible {
+  background-color: var(--backdrop);
+  color: var(--text);
+}
+
+/* Bracket ticks that appear on hover: the directory's row and card hover. */
+.hover-corners {
+  position: relative;
+}
+.hover-corners::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur) var(--ease);
+  --tick: var(--text);
+  background:
+    linear-gradient(var(--tick), var(--tick)) top left / 9px 1px,
+    linear-gradient(var(--tick), var(--tick)) top left / 1px 9px,
+    linear-gradient(var(--tick), var(--tick)) top right / 9px 1px,
+    linear-gradient(var(--tick), var(--tick)) top right / 1px 9px,
+    linear-gradient(var(--tick), var(--tick)) bottom left / 9px 1px,
+    linear-gradient(var(--tick), var(--tick)) bottom left / 1px 9px,
+    linear-gradient(var(--tick), var(--tick)) bottom right / 9px 1px,
+    linear-gradient(var(--tick), var(--tick)) bottom right / 1px 9px;
+  background-repeat: no-repeat;
+}
+.hover-corners:hover::after,
+.hover-corners:focus-visible::after {
+  opacity: 1;
+}
+
+/* The ghost button's four ticks, freed for any surface. */
+.corners {
+  position: relative;
+}
+.corners > .c {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border: 0 solid var(--faint);
+}
+.corners > .c-tl { top: 0; left: 0; border-top-width: 1px; border-left-width: 1px; }
+.corners > .c-tr { top: 0; right: 0; border-top-width: 1px; border-right-width: 1px; }
+.corners > .c-bl { bottom: 0; left: 0; border-bottom-width: 1px; border-left-width: 1px; }
+.corners > .c-br { bottom: 0; right: 0; border-bottom-width: 1px; border-right-width: 1px; }
+
+/* A scrollbar that does not shout. */
+.scroll-quiet {
+  scrollbar-width: thin;
+  scrollbar-color: var(--muted) transparent;
+}
+.scroll-quiet::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+.scroll-quiet::-webkit-scrollbar-thumb {
+  background: var(--track);
+  border-radius: 3px;
+}
+.scroll-quiet::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* --- Motion ------------------------------------------------------------ */
+
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+@keyframes pop { 0% { opacity: 0; transform: scale(0.75) translateY(26px); } 100% { opacity: 1; transform: none; } }
+@keyframes shake {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-7px, 4px); }
+  40% { transform: translate(6px, -5px); }
+  60% { transform: translate(-5px, -3px); }
+  80% { transform: translate(5px, 4px); }
+}
+@keyframes slam {
+  0% { opacity: 0; transform: scale(2.4); }
+  60% { opacity: 1; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+.fade-in {
+  animation: fade-in var(--dur) var(--ease) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim,
+  .fade-in {
+    animation: none !important;
+  }
+}
+
+/* The light that crosses a card as the draw lands. */
+@keyframes sweep {
+  0% { transform: translateX(-120%) skewX(-14deg); opacity: 0; }
+  18% { opacity: 0.7; }
+  100% { transform: translateX(220%) skewX(-14deg); opacity: 0; }
+}
+.card-sweep {
+  position: absolute;
+  inset: -30% -60%;
+  pointer-events: none;
+  background: linear-gradient(100deg, transparent 38%, rgba(255, 255, 255, 0.35) 50%, transparent 62%);
+  animation: sweep 1100ms var(--ease) 200ms both;
+}
+
+/* The pack rip's ladder: each fact slams in and stays. */
+@keyframes rattle {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(-6px, 3px) rotate(-1.6deg); }
+  50% { transform: translate(5px, -4px) rotate(1.4deg); }
+  75% { transform: translate(-3px, -2px) rotate(-0.8deg); }
+}
+@keyframes stamp {
+  0% { opacity: 0; transform: scale(1.9); }
+  60% { opacity: 1; transform: scale(0.97); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes hover-float {
+  0%, 100% { transform: translateY(0) rotate(-0.6deg); }
+  50% { transform: translateY(-12px) rotate(0.6deg); }
+}
+@keyframes breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* The storefront's two columns: the stage and the pool's contents. The
+   contents tab takes the room it needs — ten cards to read beat a pack
+   that is only sitting there — and the stage keeps its shelf, so the pull
+   never leaves the screen. The columns are interpolable, so the switch is
+   a move rather than a cut; a throttled tab resumes it on the way back,
+   and reduced motion gets the end state at once. */
+@media (min-width: 1024px) {
+  [data-wide] {
+    grid-template-columns: minmax(0, 1fr) 360px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    [data-wide] {
+      transition: grid-template-columns 460ms var(--ease);
+    }
+  }
+  [data-wide="true"] {
+    grid-template-columns: minmax(0, 1fr) 620px;
+  }
+}
+@media (min-width: 1280px) {
+  [data-wide] {
+    grid-template-columns: minmax(0, 1fr) 390px;
+  }
+  [data-wide="true"] {
+    grid-template-columns: minmax(0, 1fr) 700px;
+  }
+}
+
+/* What sits in the aside when the tab changes: the contents arrive as the
+   column opens, rather than snapping in at the old width. Transition, not
+   keyframes — a stalled keyframe would leave the panel blank. */
+.tab-body {
+  opacity: 1;
+  transition: opacity var(--dur) var(--ease);
+}
+.tab-body[data-swapping="true"] {
+  opacity: 0;
+}
