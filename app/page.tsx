@@ -37,12 +37,16 @@ const ENFORCED = [
   ["Custody", "None, at any point", "The buyer signs and pays from their own wallet. This site holds no keys, no cards and no funds."],
 ] as const;
 
-const FORK = [
-  ["Clone and run it", "npm install, copy .env.example to .env.local, add your RPC, npm run dev. SQLite writes itself on first run."],
-  ["List your pools", "pools.json is the whole storefront: an address, a name, pack art. Make a pool on opengacha.io and paste it in."],
+const FORK: readonly (readonly [string, string, string?])[] = [
+  [
+    "Clone and run it",
+    "Then copy .env.example to .env.local, add your RPC, and npm run dev. SQLite writes itself on first run.",
+    "git clone https://github.com/willmexi/opengacha.git\ncd opengacha && npm install && npm run dev",
+  ],
+  ["List your pools", "pools.json is the whole storefront: an address, a name, pack art. Make a pool at opengacha.io/create, copy its brief from Manage's API & SDK tab, and paste the address in."],
   ["Read lib/gacha", "Every call the site makes: read the pool, quote, request, wait for the draw, settle. No API key and no backend of ours."],
   ["Make it yours", "Your domain, your type, your art. Fees split on chain between the pool's creator and the protocol; nothing here can move them."],
-] as const;
+];
 
 export default function Home() {
   return (
@@ -82,11 +86,10 @@ export default function Home() {
                 href="https://github.com/willmexi/opengacha/fork"
                 target="_blank"
                 rel="noreferrer"
-                className="btn-ghost inline-flex items-center gap-2 px-4 py-[13px] text-[11px] leading-none"
+                className="btn-ghost px-4 py-[13px] text-[11px] leading-none"
                 title="Fork this storefront on GitHub"
               >
-                <GitHubMark />
-                Fork this storefront
+                Fork on GitHub ↗
               </a>
             </div>
             <LiveLine />
@@ -145,13 +148,22 @@ export default function Home() {
         <SectionRule label="Run this storefront yourself" />
         <section className="grid lg:grid-cols-[minmax(0,1fr)_420px]">
           <ol className="m-0 flex min-w-0 list-none flex-col p-0">
-            {FORK.map(([t, d], i) => (
+            {FORK.map(([t, d, cmd], i) => (
               <li
                 key={t}
                 className="px-6 py-5 sm:px-10"
                 style={{ borderBottom: i < FORK.length - 1 ? "1px solid var(--hairline)" : undefined }}
               >
                 <span className="heading text-[13.5px]">{t}</span>
+                {cmd && (
+                  /* The command as a command: copyable, on its own lines. */
+                  <pre
+                    className="figure m-0 mt-2.5 overflow-x-auto rounded-[3px] px-3.5 py-2.5 text-[11.5px] leading-[1.7]"
+                    style={{ background: "var(--cell)", border: "1px solid var(--hairline)" }}
+                  >
+                    {cmd}
+                  </pre>
+                )}
                 <p className="m-0 mt-1.5 max-w-[66ch] text-[13px] leading-[1.7]" style={{ color: "var(--muted)" }}>
                   {d}
                 </p>
@@ -181,10 +193,9 @@ await resolve(w, addr, pool, done, c, meta, "keep")`}
                 href="https://github.com/willmexi/opengacha"
                 target="_blank"
                 rel="noreferrer"
-                className="btn-ghost inline-flex items-center gap-2 px-4 py-3 text-[11px] leading-none"
+                className="btn-ghost px-4 py-3 text-[11px] leading-none"
               >
-                <GitHubMark />
-                Source on GitHub
+                Source on GitHub ↗
               </a>
             </div>
           </div>
@@ -205,11 +216,3 @@ await resolve(w, addr, pool, done, c, meta, "keep")`}
   );
 }
 
-/** GitHub's mark, inline, the size of the label beside it. */
-function GitHubMark() {
-  return (
-    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden fill="currentColor">
-      <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
-    </svg>
-  );
-}
