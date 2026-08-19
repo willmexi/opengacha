@@ -155,7 +155,9 @@ export function LiveLine() {
           {p.activePositions} cards in the case · {p.pullCount} pulls so far
         </>
       ) : (
-        <span style={{ animation: "breathe 1.4s infinite" }}>Reading the pool</span>
+        /* Silent until the figures land; the line keeps its height so the
+           copy above does not jump when they do. */
+        <span aria-busy="true">&nbsp;</span>
       )}
     </p>
   );
