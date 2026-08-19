@@ -11,7 +11,7 @@
 
 Works with Metaplex Token Metadata NFTs, programmable NFTs (pNFTs) and Metaplex Core assets. Built for graded Pokémon and TCG slabs, PFP collections, and any NFT collection with a verified collection address.
 
-**Live examples:** [MEW GACHA](https://www.opengacha.io/mew-gacha) (own stock) · [Decentralised Pokemon Gacha](https://www.opengacha.io/decentralised-pokemon-gacha) (anyone deposits, relist on). **Create your own pool:** [opengacha.io/create](https://www.opengacha.io/create). **Docs:** [opengacha.io/docs](https://www.opengacha.io/docs).
+**Live examples:** [MEW GACHA](https://www.opengacha.io/mew-gacha) (own stock) · [y00ts packs](https://www.opengacha.io/y00ts-packs) (decentralised: anyone deposits). **Create your own pool:** [opengacha.io/create](https://www.opengacha.io/create). **Docs:** [opengacha.io/docs](https://www.opengacha.io/docs).
 
 ## What you get
 
