@@ -155,6 +155,9 @@ function readPoolPrefix(data: Uint8Array) {
   u8(); u8(); // max_batch, allowlist_enabled
   u64(); u64(); u64(); // resolve_window, final_window, request_expiry
   u8(); // discount_to_depositors
+  const recipients = u32(); // fee_recipients: Vec<{ wallet, share_bps }>
+  o += recipients * (32 + 2);
+  u8(); // deposits_paused
   const acquisitionsPaused = u8() === 1;
   return { weightIndex, totalBacking, activePositions, surchargeBps, acquisitionsPaused };
 }
