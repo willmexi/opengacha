@@ -11,7 +11,14 @@ import "./globals.css";
 const DESCRIPTION =
   "Open-source gacha storefront for pools on the OpenGacha protocol: pull a real graded card, then keep it or take the buyback.";
 
+/* Where this storefront lives, for absolute share-card URLs: set
+   NEXT_PUBLIC_SITE_URL on your host; Vercel's own URL is the fallback, and a
+   local dev build just serves relative paths. The card itself is
+   app/opengraph-image.png, swap it for your own. */
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined);
+
 export const metadata: Metadata = {
+  ...(SITE_URL ? { metadataBase: new URL(SITE_URL) } : {}),
   title: { default: "OpenGacha", template: "%s" },
   description: DESCRIPTION,
   applicationName: "OpenGacha",
