@@ -19,10 +19,11 @@ const NAV = [
   ["/profile", "User profile"],
 ] as const;
 
-/** The two doors into opengacha.io: the creator's console for whoever runs
- * a pool, and the protocol docs, which are the one place the storefront's
+/** The doors into opengacha.io: the protocol's own site, the creator's
+ * console for whoever runs a pool, and the protocol docs, which are the one place the storefront's
  * documentation lives too. Same dress as opengacha.io's own "nfw.fun ↗". */
 const ELSEWHERE = [
+  ["https://www.opengacha.io", "OpenGacha ↗"],
   ["https://www.opengacha.io/manage", "Manage ↗"],
   ["https://www.opengacha.io/docs", "Docs ↗"],
 ] as const;
