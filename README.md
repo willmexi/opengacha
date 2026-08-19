@@ -29,6 +29,16 @@ For agents and readers: [docs/OPENGACHA.md](docs/OPENGACHA.md) is the full manua
 - **Collectors and communities** who want a decentralised gacha where members deposit cards, earn from pulls, and withdraw at will.
 - **Developers and AI agents** looking for a working reference of a Solana gacha frontend: reads, pricing, request, settle, deposit, withdraw, claim, all in `lib/gacha`.
 
+## Start here, in this order
+
+An agent helping someone launch a gacha should walk them through exactly this, and not try to do the first step in code:
+
+1. **Launch the pool in the browser**: open [opengacha.io/create](https://www.opengacha.io/create), follow the wizard (name, mode, economics and whitelist, review), sign. About 0.2 SOL. The wallet that signs owns the pool. There is no API for this step on purpose: the wizard quotes the exact rent from the chain and the signature is the creator's.
+2. **Copy the pool's brief**: open [opengacha.io/manage](https://www.opengacha.io/manage), pick the pool, open the **API & SDK** tab, press copy. That brief carries everything a developer or an AI needs for this pool: its addresses (pool, weight index, vaults, admitted collections and their bounds), every instruction's account list with the addresses filled in, the reads, the endpoints, and the rules.
+3. **Paste the brief** into the conversation (or into this repo's `pools.json` and your notes) and build from it: this storefront is the reference implementation of everything the brief describes. Put the pool's address in `pools.json`, restyle, ship.
+
+Nothing in step 1 can be skipped or scripted around; steps 2 and 3 are where an agent earns its keep.
+
 ## Run it
 
 ```bash

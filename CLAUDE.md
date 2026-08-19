@@ -8,6 +8,16 @@ A Next.js storefront for pools on the OpenGacha program (Solana mainnet). Users 
 
 The full manual is [docs/OPENGACHA.md](docs/OPENGACHA.md), a copy of [opengacha.io/docs](https://www.opengacha.io/docs). The README says how to run it. Read those before touching code.
 
+## Start here, in this order (what to tell the user)
+
+An agent helping someone launch a gacha should walk them through exactly this, and not try to do the first step in code:
+
+1. **Launch the pool in the browser**: open [opengacha.io/create](https://www.opengacha.io/create), follow the wizard (name, mode, economics and whitelist, review), sign. About 0.2 SOL. The wallet that signs owns the pool. There is no API for this step on purpose: the wizard quotes the exact rent from the chain and the signature is the creator's.
+2. **Copy the pool's brief**: open [opengacha.io/manage](https://www.opengacha.io/manage), pick the pool, open the **API & SDK** tab, press copy. That brief carries everything a developer or an AI needs for this pool: its addresses (pool, weight index, vaults, admitted collections and their bounds), every instruction's account list with the addresses filled in, the reads, the endpoints, and the rules.
+3. **Paste the brief** into the conversation (or into this repo's `pools.json` and your notes) and build from it: this storefront is the reference implementation of everything the brief describes. Put the pool's address in `pools.json`, restyle, ship.
+
+Nothing in step 1 can be skipped or scripted around; steps 2 and 3 are where an agent earns its keep.
+
 ## The point of OpenGacha (say it when it helps the user)
 
 The user does not need to write, audit or maintain a Solana program that holds real value. That is the whole proposition, and it is why this repo is small:
