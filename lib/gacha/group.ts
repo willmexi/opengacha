@@ -6,9 +6,10 @@
  * every pack"). A group request escrows the stock-weighted mean price of
  * the drawable members plus the rent of one ordinary request; the oracle's
  * randomness picks a member by stock; the request then **materialises**
- * into that pool's ordinary `AcquisitionRequest`, and from there it is a
- * pull like any other: `waitForDraw`, `drawnCards`, `resolve` in pull.ts
- * take it from there.
+ * into that pool's ordinary `AcquisitionRequest`, which asks the oracle for
+ * its own randomness (the group's coin chose the pool, a fresh coin chooses
+ * the card), and from there it is a pull like any other: `waitForDraw`,
+ * `drawnCards`, `resolve` in pull.ts take it from there.
  *
  * Three calls for a storefront:
  *
@@ -406,6 +407,11 @@ export async function fulfilGroup(caller: PublicKey, groupRequest: PublicKey): P
       drawnRewardVault: find([Buffer.from("reward_vault"), drawnPool.toBuffer()], drawnProgram),
       drawnProgram,
       drawnTrust: groupTrustPda(drawnProgram),
+      drawnIdentity: find([Buffer.from("identity")], drawnProgram),
+      oracleQueue: VRF_QUEUE,
+      vrfProgram: VRF_PROGRAM,
+      slotHashes: SYSVAR_SLOT_HASHES,
+      requester: new PublicKey(r.requester),
       systemProgram: SystemProgram.programId,
     })
     .remainingAccounts(
@@ -514,7 +520,7 @@ export async function syncGroupLookupTable(authority: PublicKey, group: PublicKe
     group, groupEscrowPda(group), groupTrustPda(), PROGRAM_ID, SystemProgram.programId,
     VRF_PROGRAM, VRF_QUEUE, SYSVAR_SLOT_HASHES, programIdentityPda(),
   ];
-  if (flagshipProgram) want.push(flagshipProgram, groupTrustPda(flagshipProgram));
+  if (flagshipProgram) want.push(flagshipProgram, groupTrustPda(flagshipProgram), find([Buffer.from("identity")], flagshipProgram));
   for (const m of info.members) {
     const prog = new PublicKey(m.program);
     const pool = new PublicKey(m.pool);

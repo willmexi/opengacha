@@ -2651,6 +2651,35 @@
           ]
         },
         {
+          "name": "drawn_identity",
+          "docs": [
+            "oracle request the materialised request makes; checked by",
+            "derivation under the drawn program (this program's own on the direct",
+            "path)."
+          ]
+        },
+        {
+          "name": "oracle_queue",
+          "writable": true,
+          "address": "Cuj97ggrhhidhbu39TijNVqE74xvKJ69gDervRUXAxGh"
+        },
+        {
+          "name": "vrf_program",
+          "address": "Vrf1RNUjXmQGjmQrQLvJHs9SNkvDJEsRVFPkfSQUwGz"
+        },
+        {
+          "name": "slot_hashes",
+          "address": "SysvarS1otHashes111111111111111111111111111"
+        },
+        {
+          "name": "requester",
+          "docs": [
+            "oracle did not take of the reserve, and the rent the address already",
+            "held."
+          ],
+          "writable": true
+        },
+        {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
@@ -3434,6 +3463,20 @@
         {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "oracle_queue",
+          "writable": true
+        },
+        {
+          "name": "program_identity"
+        },
+        {
+          "name": "vrf_program"
+        },
+        {
+          "name": "slot_hashes",
+          "address": "SysvarS1otHashes111111111111111111111111111"
         }
       ],
       "args": [
@@ -10117,6 +10160,16 @@
             "type": "u64"
           },
           {
+            "name": "oracle_reserve",
+            "docs": [
+              "Escrowed for the drawn pool's own randomness request at",
+              "materialisation (GROUP_ORACLE_RESERVE); what the oracle does not take",
+              "goes back to the purchaser in the materialising instruction, and all",
+              "of it on cancel."
+            ],
+            "type": "u64"
+          },
+          {
             "name": "quoted_ev",
             "type": "u64"
           },
@@ -10553,24 +10606,6 @@
           {
             "name": "crown_tithe_bps",
             "type": "u16"
-          },
-          {
-            "name": "randomness",
-            "type": {
-              "array": [
-                "u8",
-                32
-              ]
-            }
-          },
-          {
-            "name": "seed",
-            "type": {
-              "array": [
-                "u8",
-                32
-              ]
-            }
           }
         ]
       }
