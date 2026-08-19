@@ -25,9 +25,12 @@
 
 import { useSyncExternalStore } from "react";
 import {
+  type AddressLookupTableAccount,
   ComputeBudgetProgram,
   PublicKey,
   Transaction,
+  TransactionMessage,
+  VersionedTransaction,
   type Connection,
   type TransactionInstruction,
 } from "@solana/web3.js";
@@ -38,8 +41,8 @@ interface Provider {
   publicKey: { toBase58(): string } | null;
   connect(opts?: { onlyIfTrusted?: boolean }): Promise<{ publicKey: { toBase58(): string } }>;
   disconnect?(): Promise<void>;
-  signTransaction(tx: Transaction): Promise<Transaction>;
-  signAndSendTransaction?(tx: Transaction): Promise<{ signature: string }>;
+  signTransaction<T extends Transaction | VersionedTransaction>(tx: T): Promise<T>;
+  signAndSendTransaction?(tx: Transaction | VersionedTransaction): Promise<{ signature: string }>;
   on?(event: string, handler: (arg: unknown) => void): void;
 }
 
@@ -222,6 +225,49 @@ export async function sendWithWallet(
   // websocket, and the site's /api/rpc is HTTP only, so it would sit on a
   // failing socket until the blockhash expired. Ask every 1.5s instead,
   // until the transaction is confirmed, fails, or its blockhash is past.
+  await confirmByPolling(connection, signature, lastValidBlockHeight);
+  return signature;
+}
+
+/**
+ * The same send for a v0 transaction against address lookup tables: what a
+ * group pull needs, since sixteen members' accounts do not fit a legacy
+ * transaction. Same simulate, same wallet preference, same confirm.
+ */
+export async function sendVersionedWithWallet(
+  payer: PublicKey,
+  instructions: TransactionInstruction[],
+  computeUnits: number,
+  tables: AddressLookupTableAccount[]
+): Promise<string> {
+  const w = provider();
+  if (!w) throw new Error("No Solana wallet found.");
+  const { connection } = chain();
+  const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash("confirmed");
+  const message = new TransactionMessage({
+    payerKey: payer,
+    recentBlockhash: blockhash,
+    instructions: [ComputeBudgetProgram.setComputeUnitLimit({ units: computeUnits }), ...instructions],
+  }).compileToV0Message(tables);
+  const tx = new VersionedTransaction(message);
+
+  try {
+    const sim = await connection.simulateTransaction(tx, { sigVerify: false, replaceRecentBlockhash: true });
+    if (sim.value.err) {
+      const reason = programError(sim.value.logs);
+      throw new Error(reason ?? `Transaction would fail: ${JSON.stringify(sim.value.err)}`);
+    }
+  } catch (e) {
+    if (e instanceof Error && !/fetch|network|timeout|429|503/i.test(e.message)) throw e;
+  }
+
+  let signature: string;
+  if (typeof w.signAndSendTransaction === "function") {
+    signature = (await w.signAndSendTransaction(tx)).signature;
+  } else {
+    const signed = await w.signTransaction(tx);
+    signature = await connection.sendRawTransaction(signed.serialize(), { skipPreflight: true, maxRetries: 3 });
+  }
   await confirmByPolling(connection, signature, lastValidBlockHeight);
   return signature;
 }

@@ -112,6 +112,17 @@ A deposit landing while a draw is open is **staged**: zero weight, not selectabl
 
 `withdrawCard` sends `withdraw` / `withdraw_core`. Never pausable, not even by the creator. While a draw is open the instruction must name the head-of-queue request; the client reads it. A frozen vault means a pNFT in escrow and needs the Token Metadata bundle; the depositor's token account is recreated idempotently first. A drawn card cannot be withdrawn until its winner decides; it comes back on a buyback. `claimRewards` is four accounts, no branching.
 
+### One pull over many packs (group pulls)
+
+`lib/gacha/group.ts`. A **group** is an on-chain list of pools under one authority; a **group pull** pays one price (the stock-weighted mean of the drawable members' prices, plus one request's rent) into the group's escrow, the oracle picks a member by how many cards it holds, and the request **materialises** into that pool's ordinary request, where `waitForDraw` / `drawnCards` / `resolve` take over unchanged. The creators of every pack in the draw split the pooled share of the fee equally, drawn or not.
+
+- `readGroup(group)` → members, live price, lookup table, paused.
+- `requestGroup(buyer, group)` → one v0 transaction against the group's lookup table (`sendVersionedWithWallet`).
+- `waitForMaterialisation(buyer, groupRequest)` → `{ pool, request, requestId }` for `pull.ts`. It watches the group request; NFW's worker materialises a served group within a tick of the randomness, and after a few quiet seconds the buyer's own wallet does it (`fulfilGroup`, permissionless, the program recomputes the selection).
+- For your own group over your own packs: `createGroup(authority, id)`, `setGroupMembers(authority, group, pools)`, `syncGroupLookupTable(authority, group)`; register it with NFW to have the worker serve it, or let the buyer's wallet materialise (built in above).
+
+nfw.fun's "pull from every pack" is this over every listed pack plus NFW's own two pools; the live directory is `GET /open/groups` on NFW's api.
+
 ## How the code is laid out
 
 ```

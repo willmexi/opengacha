@@ -135,6 +135,10 @@ Two pools ship as examples, one of each mode. Replace them with yours: a storefr
 
 Two React hooks sit on top: `usePlay` (the pull and settle flow) drives the packs and spins screens; `useHub` drives the user profile across every pool in `pools.json`. Screens and styling are yours to replace; the hooks and `lib/gacha` need no change for a different pool.
 
+### Group pulls: one pull over many packs
+
+A group is an on-chain list of pools (yours, or the ones nfw.fun lists); a group pull pays one price, the oracle picks the pack by how many cards it holds, and the pull becomes that pack's ordinary pull. Every pack in the draw shares the pooled creator fee equally, drawn or not. The storefront's `lib/gacha/group.ts` reads a group, requests over it and follows the request into its pack; the README's "One pull over many packs" section is the walkthrough.
+
 ### What it does not do, on purpose
 
 Batches (the client takes a batch size; the screens pull one at a time), cancel and forced settle (housekeeping NFW performs), promotion of staged positions (NFW), and wallets other than the injected provider (swap the provider in `wallet.ts` for a wallet adapter and keep the store and the send). Nothing in it runs a draw: the client waits on the request account and NFW settles it.
