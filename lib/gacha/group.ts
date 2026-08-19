@@ -230,7 +230,7 @@ export interface GroupRequestInfo {
   randomnessReady: boolean;
   randomness: Uint8Array;
   seed: Uint8Array;
-  quoted: { pool: string; ev: bigint }[];
+  quoted: { pool: string; ev: bigint; stock: number }[];
   materialisedInto: string | null;
   materialisedPool: string | null;
   cancelled: boolean;
@@ -249,7 +249,7 @@ export async function readGroupRequest(key: PublicKey): Promise<GroupRequestInfo
     randomnessReady: r.randomnessReady,
     randomness: Uint8Array.from(r.randomness),
     seed: Uint8Array.from(r.seed),
-    quoted: (r.quoted as any[]).map((q) => ({ pool: new PublicKey(q.pool).toBase58(), ev: BigInt(q.ev.toString()) })),
+    quoted: (r.quoted as any[]).map((q) => ({ pool: new PublicKey(q.pool).toBase58(), ev: BigInt(q.ev.toString()), stock: Number(q.stock) })),
     materialisedInto: r.materialisedInto ? new PublicKey(r.materialisedInto).toBase58() : null,
     materialisedPool: r.materialisedPool ? new PublicKey(r.materialisedPool).toBase58() : null,
     cancelled: r.cancelled,
@@ -282,10 +282,12 @@ function memberTarget(randomness: Uint8Array, seed: Uint8Array, bound: bigint): 
   throw new Error("draw exhausted its sampling rounds");
 }
 
-/** Which member the randomness selects, over the members as quoted for this request. */
+/** Which member the randomness selects: over the stock quoted at request time, as the program does. */
 export function selectMember(info: GroupInfo, r: GroupRequestInfo): number {
-  const quotedEv = (pool: string) => r.quoted.find((q) => q.pool === pool)?.ev ?? 0n;
-  const quotes = info.members.map((m) => (quotedEv(m.pool) > 0n ? m.quote : { stock: 0, ev: 0n, price: 0n }));
+  const quotes = info.members.map((m) => {
+    const q = r.quoted.find((x) => x.pool === m.pool);
+    return q && q.ev > 0n && q.stock > 0 ? { stock: q.stock, ev: q.ev, price: 0n } : { stock: 0, ev: 0n, price: 0n };
+  });
   const stock = quotes.reduce((a, q) => a + BigInt(q.stock), 0n);
   if (stock === 0n) throw new Error("no member of this group can be drawn right now");
   const target = memberTarget(r.randomness, r.seed, stock);
@@ -479,10 +481,12 @@ export async function createGroup(
   groupId: number | bigint,
   opts: { creatorSplitBps?: number; requestExpirySeconds?: number } = {}
 ): Promise<{ group: string; signature: string }> {
+  // Only wallets on the protocol's creator allowlist (the `group_creators`
+  // account) may create a group: ask NFW to be added before calling this.
   const group = groupPda(authority, groupId);
   const ix = await methods()
     .createGroup(new BN(groupId.toString()), opts.creatorSplitBps ?? 10_000, new BN(opts.requestExpirySeconds ?? 600))
-    .accounts({ authority, group, systemProgram: SystemProgram.programId })
+    .accounts({ authority, groupCreators: find([Buffer.from("group_creators")]), group, systemProgram: SystemProgram.programId })
     .instruction();
   const signature = await sendWithWallet(authority, [ix], CU.admin);
   return { group: group.toBase58(), signature };

@@ -1231,6 +1231,35 @@
           "signer": true
         },
         {
+          "name": "group_creators",
+          "docs": [
+            "The creator allowlist, and the protocol authority who always may."
+          ],
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  114,
+                  111,
+                  117,
+                  112,
+                  95,
+                  99,
+                  114,
+                  101,
+                  97,
+                  116,
+                  111,
+                  114,
+                  115
+                ]
+              }
+            ]
+          }
+        },
+        {
           "name": "group",
           "writable": true,
           "pda": {
@@ -2846,6 +2875,96 @@
         {
           "name": "collection",
           "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "init_group_creators",
+      "docs": [
+        "Protocol authority: the wallets that may create groups (see",
+        "`GroupCreators`); the authority itself always may."
+      ],
+      "discriminator": [
+        58,
+        117,
+        26,
+        185,
+        166,
+        255,
+        96,
+        76
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "protocol_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  116,
+                  111,
+                  99,
+                  111,
+                  108,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "group_creators",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  114,
+                  111,
+                  117,
+                  112,
+                  95,
+                  99,
+                  114,
+                  101,
+                  97,
+                  116,
+                  111,
+                  114,
+                  115
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "creators",
+          "type": {
+            "vec": "pubkey"
+          }
         }
       ]
     },
@@ -6416,6 +6535,60 @@
       ]
     },
     {
+      "name": "set_group_creators",
+      "discriminator": [
+        85,
+        227,
+        78,
+        192,
+        88,
+        189,
+        225,
+        104
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "group_creators",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  114,
+                  111,
+                  117,
+                  112,
+                  95,
+                  99,
+                  114,
+                  101,
+                  97,
+                  116,
+                  111,
+                  114,
+                  115
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "creators",
+          "type": {
+            "vec": "pubkey"
+          }
+        }
+      ]
+    },
+    {
       "name": "set_group_lookup_table",
       "discriminator": [
         27,
@@ -8083,6 +8256,19 @@
       ]
     },
     {
+      "name": "GroupCreators",
+      "discriminator": [
+        94,
+        248,
+        24,
+        104,
+        68,
+        204,
+        156,
+        130
+      ]
+    },
+    {
       "name": "GroupRequest",
       "discriminator": [
         122,
@@ -9716,6 +9902,37 @@
       }
     },
     {
+      "name": "GroupCreators",
+      "docs": [
+        "Who may create groups. A group pools the drawn pool's creator fee across",
+        "its members, so an open `create_group` would let anyone build {their own",
+        "pool, a pool they covet} and skim that pool's fee on every pull they route",
+        "through the group. The protocol authority names the creators (the open",
+        "worker's key for nfw.fun's groups); a creator's own group over their own",
+        "packs is an entry here, granted by ops. Its own account, seeded",
+        "`group_creators`, so `GroupTrust` keeps the layout the flagship's has."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "creators",
+            "type": {
+              "vec": "pubkey"
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
       "name": "GroupFeeCredited",
       "docs": [
         "A pool's fee bucket received a group's equal share."
@@ -10851,6 +11068,17 @@
           {
             "name": "escrow_bump",
             "type": "u8"
+          },
+          {
+            "name": "head_since",
+            "docs": [
+              "When the current head became the head: on its request if the queue",
+              "was empty, else when its predecessor materialised or was cancelled.",
+              "The cancel grace is measured from the later of this and the reveal,",
+              "as the pools do, so a request revealed while queued is still shielded",
+              "for the grace once it is the head."
+            ],
+            "type": "i64"
           }
         ]
       }
@@ -11112,6 +11340,17 @@
           {
             "name": "ev",
             "type": "u64"
+          },
+          {
+            "name": "stock",
+            "docs": [
+              "The member's drawable stock at quote time: the selection weight.",
+              "Fixed here so nothing that happens to a member between the reveal",
+              "and the materialisation (a withdrawal, a deposit, a pause) can",
+              "re-roll which member the coin chose; a member that is no longer",
+              "drawable when chosen is a refusal, never a re-draw."
+            ],
+            "type": "u32"
           }
         ]
       }
