@@ -135,9 +135,9 @@ export function LiveCase() {
           )}
         </>
       ) : (
-        <p className="label m-0" style={{ animation: "breathe 1.4s infinite" }}>
-          Opening the case
-        </p>
+        /* Nothing while the cards load: no words, no pulse; the cards
+           simply appear when the read lands. */
+        <div aria-busy="true" className="min-h-[1px]" />
       )}
     </div>
   );
