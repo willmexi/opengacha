@@ -13,7 +13,8 @@
  * no SOL — so nobody has to spend anything to see what they are buying.
  */
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 import { BuilderPanel } from "@/components/builder-panel";
 import { ExitChoice } from "@/components/exit-choice";
@@ -44,6 +45,20 @@ function PacksRoute() {
 function Packs({ slug, onPick }: { slug: string; onPick: (s: string) => void }) {
   const play = usePlay(slug);
   const { config, snapshot, stage } = play;
+
+  /* `?settle=<requestId>`, the header's Open acquisitions menu sending the
+     buyer straight into a decision: once this wallet's open pulls in this
+     pool are read, the named one resumes. Once per mount, so a later pull
+     on the same page is never hijacked by a stale URL. */
+  const settleParam = useSearchParams().get("settle");
+  const settled = useRef(false);
+  useEffect(() => {
+    if (settled.current || settleParam === null || stage !== "idle") return;
+    const wanted = play.openPulls.find((r) => String(r.requestId) === settleParam);
+    if (!wanted) return;
+    settled.current = true;
+    void play.resume(wanted);
+  }, [settleParam, play.openPulls, stage, play]);
   const [demo, setDemo] = useState<{ card: RevealCard; cert: string; odds: string } | null>(null);
   const [revealed, setRevealed] = useState(false);
   const [tab, setTab] = useState<Tab>("packs");

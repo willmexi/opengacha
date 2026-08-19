@@ -76,6 +76,7 @@ interface Methods {
   requestAcquisition(args: { maxPrice: BN; batch: number; maxSlippageBps: number; minPoolBacking: BN; nonce: BN }): IxBuilder;
   resolveChoice(choice: Choice): IxBuilder;
   resolveChoiceCore(choice: Choice): IxBuilder;
+  cancelRequest(): IxBuilder;
 }
 const methods = () => chain().program.methods as unknown as Methods;
 
@@ -307,4 +308,30 @@ export async function resolve(
   // keeping a card has never held this mint); create it idempotently first.
   const pre = destination ? [createAtaIdempotent(buyer, destination, destinationOwner, mint)] : [];
   return sendWithWallet(buyer, [...pre, ix], pnft ? CU.resolvePnft : CU.resolvePlain);
+}
+
+// ------------------------------------------------------------ 4. cancel
+
+/** A request whose randomness never lands is refundable after this long:
+ * the program's own expiry, mirrored so the menu can call it before asking. */
+export const REQUEST_EXPIRY_MS = 15 * 60 * 1000;
+
+/**
+ * `cancel_request`: refund a pull whose draw never landed. Permissionless
+ * once the request is past its expiry, head of queue only; the program
+ * returns `price_paid - vrf_fee` to the ORIGINAL requester whoever signs,
+ * so a storefront may offer it to the buyer as a plain button.
+ */
+export async function cancelRequest(caller: PublicKey, poolAddress: PublicKey, request: RequestInfo): Promise<string> {
+  const ix = await methods()
+    .cancelRequest()
+    .accounts({
+      caller,
+      pool: poolAddress,
+      request: new PublicKey(request.address),
+      requester: new PublicKey(request.requester),
+      rewardVault: rewardVaultPda(poolAddress),
+    })
+    .instruction();
+  return sendWithWallet(caller, [ix], 120_000);
 }

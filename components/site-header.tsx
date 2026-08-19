@@ -9,6 +9,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { AcquisitionsMenu } from "@/components/acquisitions-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { WalletChip } from "@/components/wallet-chip";
 
@@ -84,6 +85,9 @@ export function SiteHeader() {
         >
           Source
         </a>
+        {/* Open acquisitions: every unsettled pull, on any pack here.
+            Renders nothing until a wallet is connected. */}
+        <AcquisitionsMenu />
         <ThemeToggle />
         <WalletChip />
       </div>
