@@ -54,6 +54,22 @@ cp .env.example .env.local     # then set RPC_URL
 
 The SQLite database (`data/opengacha.db`) is created on first run. Node 22.5+ (for the built-in `node:sqlite`).
 
+## Try it on devnet first
+
+You can run the whole storefront against Solana devnet, where nothing costs real money: pull, keep, take the buyback, deposit, withdraw.
+
+```bash
+NEXT_PUBLIC_CLUSTER=devnet npm run dev
+```
+
+That one variable swaps three things: the storefront sells `pools.devnet.json` instead of `pools.json`, JSON-RPC defaults to Solana's public devnet endpoint, and explorer links land on devnet. `pools.devnet.json` ships with OpenGacha's public demo pool: a hundred fake cards backed with 0.002 to 0.02 devnet SOL each, so a pull costs about a cent of faucet SOL.
+
+1. Get devnet SOL at [faucet.solana.com](https://faucet.solana.com) (1 SOL is plenty).
+2. Put your wallet on devnet. Phantom: Settings, Developer Settings, Testnet Mode, then pick Solana Devnet.
+3. Open the demo pack and pull.
+
+The cards are worthless test NFTs and the pool is refilled from time to time. When you test your own pool, create it on devnet, put its address in `pools.devnet.json`, and set `RPC_URL` to your own devnet endpoint. Unset `NEXT_PUBLIC_CLUSTER` and you are back on mainnet.
+
 ## Point it at your pools
 
 The two pools in `pools.json` are examples, one of each kind, so you can see everything work before you touch anything. **Replace them with your own.** A storefront that sells someone else's pools sends the pulls (and the creator's share of the fees) to that someone else; the file is meant to hold the pools you run or represent. `pools.json` lists what the storefront sells:
@@ -169,7 +185,8 @@ The browser reaches your RPC only through `/api/rpc`, which forwards an allowlis
 
 | var | what |
 |---|---|
-| `RPC_URL` | your Solana mainnet RPC (server-side only). DAS support (Helius, QuickNode with the add-on, Triton) is needed for Core assets in the deposit picker |
+| `NEXT_PUBLIC_CLUSTER` | `devnet` points the storefront at devnet and `pools.devnet.json`; unset means mainnet |
+| `RPC_URL` | your Solana RPC for the chosen cluster (server-side only). DAS support (Helius, QuickNode with the add-on, Triton) is needed for Core assets in the deposit picker |
 | `NEXT_PUBLIC_RPC` | optional browser-safe RPC; skips the proxy |
 | `DATABASE_PATH` | SQLite file, default `./data/opengacha.db` |
 | `ART_SHELF` | `0` keeps every card picture on the URL its metadata gives; default asks OpenGacha's art shelf (`/art` on the directory api) for a durable copy on their image domain, one fetch ever per card |

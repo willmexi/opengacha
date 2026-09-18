@@ -3,6 +3,7 @@ import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 
 import { SiteHeader } from "@/components/site-header";
+import { IS_DEVNET } from "@/lib/cluster";
 import "./globals.css";
 
 /* The app's two faces: Geist for prose and headings, Geist Mono for every
@@ -42,6 +43,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
       </head>
       <body className="antialiased">
+        {/* Devnet only: say so on every page, and say how to get in. */}
+        {IS_DEVNET && (
+          <p className="label m-0 px-4 py-2 text-center" style={{ borderBottom: "1px solid var(--line)" }}>
+            Devnet demo · nothing here costs real money · get SOL at{" "}
+            <a href="https://faucet.solana.com" target="_blank" rel="noreferrer" style={{ color: "var(--accent)" }}>
+              faucet.solana.com
+            </a>{" "}
+            · set your wallet to Solana Devnet (Phantom: Developer Settings, Testnet Mode)
+          </p>
+        )}
         <SiteHeader />
         {children}
       </body>

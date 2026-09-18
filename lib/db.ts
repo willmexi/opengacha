@@ -22,7 +22,10 @@ let handle: DatabaseSync | null = null;
 
 export function db(): DatabaseSync {
   if (handle) return handle;
-  const path = resolve(process.cwd(), process.env.DATABASE_PATH || "./data/opengacha.db");
+  // A serverless host's project directory is read-only; /tmp is the one
+  // writable place. The file is a display cache, so losing it costs a re-read.
+  const fallback = process.env.VERCEL ? "/tmp/opengacha.db" : "./data/opengacha.db";
+  const path = resolve(process.cwd(), process.env.DATABASE_PATH || fallback);
   mkdirSync(dirname(path), { recursive: true });
   handle = new DatabaseSync(path);
   handle.exec(`
