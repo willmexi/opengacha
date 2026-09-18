@@ -3,7 +3,7 @@
  *
  * Two files, one per cluster: pools.json is what you sell for real,
  * pools.devnet.json is what the same storefront sells when
- * NEXT_PUBLIC_CLUSTER=devnet. Keeping them apart means a devnet run can
+ * the cluster is devnet (the default). Keeping them apart means a devnet run can
  * never quote a mainnet pool's price, and switching back is one variable.
  */
 

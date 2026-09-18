@@ -46,29 +46,32 @@ npm install
 npm run dev                    # http://localhost:3020
 ```
 
-That runs as is, on Solana's public mainnet RPC. It is enough to look around; the public endpoint rate-limits quickly under real use, so before you show it to anyone put your own RPC (Helius, QuickNode, Triton, any provider) in `.env.local`:
+That runs as is, on devnet. Settings live in `.env.local`:
 
 ```bash
-cp .env.example .env.local     # then set RPC_URL
+cp .env.example .env.local
 ```
 
 The SQLite database (`data/opengacha.db`) is created on first run. Node 22.5+ (for the built-in `node:sqlite`).
 
-## Try it on devnet first
+## It starts on devnet
 
-You can run the whole storefront against Solana devnet, where nothing costs real money: pull, keep, take the buyback, deposit, withdraw.
-
-```bash
-NEXT_PUBLIC_CLUSTER=devnet npm run dev
-```
-
-That one variable swaps three things: the storefront sells `pools.devnet.json` instead of `pools.json`, JSON-RPC defaults to Solana's public devnet endpoint, and explorer links land on devnet. `pools.devnet.json` ships with OpenGacha's public demo pool: a hundred fake cards backed with 0.002 to 0.02 devnet SOL each, so a pull costs about a cent of faucet SOL.
+Out of the box the storefront runs on Solana devnet, where nothing costs real money: pull, keep, take the buyback, deposit, withdraw. It sells `pools.devnet.json`, which ships with OpenGacha's public demo pool: a hundred fake cards backed with 0.002 to 0.02 devnet SOL each, so a pull costs about a cent of faucet SOL.
 
 1. Get devnet SOL at [faucet.solana.com](https://faucet.solana.com) (1 SOL is plenty).
 2. Put your wallet on devnet. Phantom: Settings, Developer Settings, Testnet Mode, then pick Solana Devnet.
 3. Open the demo pack and pull.
 
-The cards are worthless test NFTs and the pool is refilled from time to time. When you test your own pool, create it on devnet, put its address in `pools.devnet.json`, and set `RPC_URL` to your own devnet endpoint. Unset `NEXT_PUBLIC_CLUSTER` and you are back on mainnet.
+The cards are worthless test NFTs and the pool is refilled from time to time. To test your own pool, create it on devnet and put its address in `pools.devnet.json`. Devnet reads go to Solana's public devnet endpoint, or to `DEVNET_RPC_URL` if you set one; `RPC_URL` is never used on devnet.
+
+## Going to mainnet
+
+```bash
+NEXT_PUBLIC_CLUSTER=mainnet
+RPC_URL=<your mainnet RPC>
+```
+
+Now the storefront sells `pools.json`, reads through `RPC_URL`, and every pull spends real SOL. The public mainnet endpoint rate-limits quickly, so set your own RPC (Helius, QuickNode, Triton, any provider) before you show it to anyone.
 
 ## Point it at your pools
 
@@ -185,9 +188,10 @@ The browser reaches your RPC only through `/api/rpc`, which forwards an allowlis
 
 | var | what |
 |---|---|
-| `NEXT_PUBLIC_CLUSTER` | `devnet` points the storefront at devnet and `pools.devnet.json`; unset means mainnet |
-| `RPC_URL` | your Solana RPC for the chosen cluster (server-side only). DAS support (Helius, QuickNode with the add-on, Triton) is needed for Core assets in the deposit picker |
-| `NEXT_PUBLIC_RPC` | optional browser-safe RPC; skips the proxy |
+| `NEXT_PUBLIC_CLUSTER` | unset means devnet and `pools.devnet.json`; `mainnet` sells `pools.json` for real |
+| `DEVNET_RPC_URL` | optional devnet RPC (server-side only); default is Solana's public devnet endpoint |
+| `RPC_URL` | your Solana mainnet RPC (server-side only), used on mainnet only. DAS support (Helius, QuickNode with the add-on, Triton) is needed for Core assets in the deposit picker |
+| `NEXT_PUBLIC_RPC` | optional browser-safe mainnet RPC; skips the proxy. Ignored on devnet |
 | `DATABASE_PATH` | SQLite file, default `./data/opengacha.db` |
 | `ART_SHELF` | `0` keeps every card picture on the URL its metadata gives; default asks OpenGacha's art shelf (`/art` on the directory api) for a durable copy on their image domain, one fetch ever per card |
 | `DIRECTORY_API` | optional; opengacha.io's api for pull volume in the builder panel |

@@ -13,7 +13,7 @@
 import { AnchorProvider, BorshCoder, Program, type Idl } from "@coral-xyz/anchor";
 import { Connection, Keypair, PublicKey } from "@solana/web3.js";
 
-import { PUBLIC_RPC } from "@/lib/cluster";
+import { BROWSER_RPC, serverRpc } from "@/lib/cluster";
 
 import idl from "./idl.json";
 
@@ -25,9 +25,9 @@ export const IDL = idl as Idl;
  * public endpoint as a last resort, which will rate-limit you quickly. */
 export function rpcUrl(): string {
   if (typeof window !== "undefined") {
-    return process.env.NEXT_PUBLIC_RPC || `${window.location.origin}/api/rpc`;
+    return BROWSER_RPC || `${window.location.origin}/api/rpc`;
   }
-  return process.env.RPC_URL || process.env.NEXT_PUBLIC_RPC || PUBLIC_RPC;
+  return serverRpc();
 }
 
 let cached: { url: string; connection: Connection; program: Program } | null = null;

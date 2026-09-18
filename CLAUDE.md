@@ -4,7 +4,7 @@ You are helping someone run a gacha storefront on the Open Gacha Protocol. Read 
 
 ## What this repo is
 
-A Next.js storefront for pools on the OpenGacha program (Solana mainnet; `NEXT_PUBLIC_CLUSTER=devnet` points the same app at devnet and `pools.devnet.json` for free testing, see `lib/cluster.ts`). Users pull packs, settle (keep / buyback / relist), deposit into decentralised pools, earn, withdraw. The wallet signs every transaction; NFW settles every draw; the fees split on chain. There is no backend of NFW's in the money path and no API key.
+A Next.js storefront for pools on the OpenGacha program (devnet by default, selling `pools.devnet.json` for free testing; `NEXT_PUBLIC_CLUSTER=mainnet` sells `pools.json` for real, see `lib/cluster.ts`). Users pull packs, settle (keep / buyback / relist), deposit into decentralised pools, earn, withdraw. The wallet signs every transaction; NFW settles every draw; the fees split on chain. There is no backend of NFW's in the money path and no API key.
 
 The full manual is [docs/OPENGACHA.md](docs/OPENGACHA.md), a copy of [opengacha.io/docs](https://www.opengacha.io/docs). The README says how to run it. Read those before touching code.
 

@@ -7,9 +7,9 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 
-import { PUBLIC_RPC } from "@/lib/cluster";
+import { serverRpc } from "@/lib/cluster";
 
-const RPC = process.env.RPC_URL || process.env.NEXT_PUBLIC_RPC || PUBLIC_RPC;
+const RPC = serverRpc();
 
 const ALLOWED = new Set([
   "getAccountInfo",
