@@ -62,7 +62,7 @@ Out of the box the storefront runs on Solana devnet, where nothing costs real mo
 2. Put your wallet on devnet. Phantom: Settings, Developer Settings, Testnet Mode, then pick Solana Devnet.
 3. Open the demo pack and pull.
 
-The cards are worthless test NFTs and the pool is refilled from time to time. To test your own pool, create it on devnet and put its address in `pools.devnet.json`. Devnet reads go to Solana's public devnet endpoint, or to `DEVNET_RPC_URL` if you set one; `RPC_URL` is never used on devnet.
+The cards are worthless test NFTs and the pool is refilled from time to time. Devnet reads go to Solana's public devnet endpoint, or to `DEVNET_RPC_URL` if you set one; `RPC_URL` is never used on devnet.
 
 ## Going to mainnet
 

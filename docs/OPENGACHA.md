@@ -125,9 +125,19 @@ Two pools ship as examples, one of each mode. Replace them with yours: a storefr
 
 ### Run it
 
-`npm install && npm run dev` works as is, on Solana's public RPC, enough to look around. Before anyone else sees it, put your own RPC in `.env.local` as `RPC_URL` (any provider; DAS support if you want Core assets to appear in the deposit picker). The browser never sees that endpoint: it talks to the site's own `/api/rpc`, which forwards an allowlist of methods. A SQLite file (`DATABASE_PATH`, Node's built-in driver) is created on first run and holds a display cache: pool state for a few seconds, card names and art forever. Money paths never read it.
+`npm install && npm run dev` works as is, and it starts on devnet (below), so nothing you click costs real money. For mainnet set `NEXT_PUBLIC_CLUSTER=mainnet` and put your own RPC in `.env.local` as `RPC_URL` (any provider; DAS support if you want Core assets to appear in the deposit picker). The browser never sees that endpoint: it talks to the site's own `/api/rpc`, which forwards an allowlist of methods. A SQLite file (`DATABASE_PATH`, Node's built-in driver) is created on first run and holds a display cache: pool state for a few seconds, card names and art forever. Money paths never read it.
 
 `pools.json` is the whole configuration: slug, name, tagline, pool address, pack art, accent. The app reads each pool's mode, price, bounds and rules from the chain and shows only what that pool allows: the deposit tab and the relist button appear on a decentralised pool and not on an own-stock one, with nothing to set.
+
+### Try it on devnet
+
+With no settings the storefront runs on Solana devnet and sells `pools.devnet.json`, which ships with OpenGacha's public demo pool (`DtDRuh7hW5LuLUnAhaQcZdb7iTxdxfJGtLZu9VxhMRiz`): a hundred fake cards backed with 0.002 to 0.02 devnet SOL each, open to deposits, relist on. The program is the same one as on mainnet, at the same address, and NFW settles draws there too, so pull, keep, buyback, relist, deposit and withdraw all behave as they will for real.
+
+1. Get devnet SOL at [faucet.solana.com](https://faucet.solana.com); 1 SOL lasts a long time at about 0.008 SOL a pull.
+2. Put your wallet on devnet. Phantom: Settings, Developer Settings, Testnet Mode, Solana Devnet.
+3. `npm run dev`, open the demo pack, pull.
+
+Devnet reads go to Solana's public devnet endpoint, or to `DEVNET_RPC_URL` if you set one; `RPC_URL` is never used on devnet, so a mainnet key cannot end up serving test traffic. Explorer links land on devnet. When your flow works, set `NEXT_PUBLIC_CLUSTER=mainnet`, put your pool in `pools.json`, and ship.
 
 ### Where the chain code lives
 
