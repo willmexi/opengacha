@@ -16,6 +16,7 @@
 
 import { useState } from "react";
 
+import { explorerTx } from "@/lib/cluster";
 import { sol } from "@/lib/gacha/price";
 import type { DrawnCard, Settlement, Stage } from "@/lib/play";
 
@@ -65,7 +66,7 @@ export function ExitChoice({
             Pull again
           </button>
           <a
-            href={`https://solscan.io/tx/${settlement.signature}`}
+            href={explorerTx(settlement.signature)}
             target="_blank"
             rel="noreferrer"
             className="text-[12.5px] underline underline-offset-2"

@@ -1,0 +1,13 @@
+{
+  "_comment": "What the storefront sells when NEXT_PUBLIC_CLUSTER=devnet. This one pool is OpenGacha's public devnet demo: a hundred fake cards backed with devnet SOL, so anyone can pull, keep, take the buyback, deposit and withdraw without spending anything real. Get devnet SOL at https://faucet.solana.com and put your wallet in testnet mode. Replace it with your own devnet pool when you are testing your own.",
+  "pools": [
+    {
+      "slug": "devnet-demo",
+      "name": "Devnet demo pack",
+      "tagline": "A hundred fake cards, backed in devnet SOL. Pull one, keep it or take the buyback, deposit one of your own. Nothing here costs real money.",
+      "address": "DtDRuh7hW5LuLUnAhaQcZdb7iTxdxfJGtLZu9VxhMRiz",
+      "art": "https://metadata.y00ts.com/y/144.png",
+      "accent": "#3ddc84"
+    }
+  ]
+}

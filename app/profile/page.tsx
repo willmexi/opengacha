@@ -16,6 +16,7 @@ import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
+import { explorerTx } from "@/lib/cluster";
 import { sol } from "@/lib/gacha/price";
 import { SectionRule } from "@/components/section-rule";
 import { friendlyConnect } from "@/components/wallet-chip";
@@ -162,9 +163,9 @@ function ProfileHub() {
             <p className="m-0" style={{ color: "var(--accent-lit)" }}>
               {hub.error}
             </p>
-          ) : (
+          ) : hub.lastSignature ? (
             <a
-              href={`https://solscan.io/tx/${hub.lastSignature}`}
+              href={explorerTx(hub.lastSignature)}
               target="_blank"
               rel="noreferrer"
               className="underline underline-offset-2"
@@ -172,7 +173,7 @@ function ProfileHub() {
             >
               Done · view the transaction
             </a>
-          )}
+          ) : null}
         </div>
       )}
       </main>

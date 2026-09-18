@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { LiveCase, LiveLine, PoolCards } from "@/components/live";
+import { CLUSTER_LABEL } from "@/lib/cluster";
 import { SectionRule } from "@/components/section-rule";
 
 /**
@@ -55,7 +56,7 @@ export default function Home() {
         {/* --- The window ---------------------------------------------- */}
         <section className="grid items-center gap-10 px-4 py-14 sm:px-10 lg:grid-cols-[1.05fr_0.95fr] lg:py-20">
           <div className="flex flex-col items-start gap-6">
-            <span className="label">Open source · Solana mainnet</span>
+            <span className="label">Open source · {CLUSTER_LABEL}</span>
             <h1 className="display m-0 text-[clamp(36px,6vw,64px)]">
               Pull a graded card.
               <br />

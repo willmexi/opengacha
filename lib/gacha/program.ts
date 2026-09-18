@@ -13,19 +13,21 @@
 import { AnchorProvider, BorshCoder, Program, type Idl } from "@coral-xyz/anchor";
 import { Connection, Keypair, PublicKey } from "@solana/web3.js";
 
+import { PUBLIC_RPC } from "@/lib/cluster";
+
 import idl from "./idl.json";
 
 export const PROGRAM_ID = new PublicKey((idl as { address: string }).address);
 export const IDL = idl as Idl;
 
 /** Where JSON-RPC goes. Browser: same-origin proxy (or NEXT_PUBLIC_RPC if
- * you are happy to expose an endpoint). Server: RPC_URL, or the public
- * mainnet endpoint as a last resort, which will rate-limit you quickly. */
+ * you are happy to expose an endpoint). Server: RPC_URL, or the cluster's
+ * public endpoint as a last resort, which will rate-limit you quickly. */
 export function rpcUrl(): string {
   if (typeof window !== "undefined") {
     return process.env.NEXT_PUBLIC_RPC || `${window.location.origin}/api/rpc`;
   }
-  return process.env.RPC_URL || process.env.NEXT_PUBLIC_RPC || "https://api.mainnet-beta.solana.com";
+  return process.env.RPC_URL || process.env.NEXT_PUBLIC_RPC || PUBLIC_RPC;
 }
 
 let cached: { url: string; connection: Connection; program: Program } | null = null;
