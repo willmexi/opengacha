@@ -64,6 +64,12 @@ Out of the box the storefront runs on Solana devnet, where nothing costs real mo
 
 The cards are worthless test NFTs and the pool is refilled from time to time. Devnet reads go to Solana's public devnet endpoint, or to `DEVNET_RPC_URL` if you set one; `RPC_URL` is never used on devnet.
 
+## Your own machine on devnet
+
+The wizard and the console run on devnet too. Open [opengacha.io/create?cluster=devnet](https://www.opengacha.io/create?cluster=devnet) (or press Switch to devnet on the Create page): the header shows a Devnet badge, and everything you do until you press it again happens on devnet. Launch a machine with faucet SOL, paste the address of your own devnet collection into the whitelist, and stock it from the console exactly as you will on mainnet. Your wallet only signs there; the site submits to devnet, so the wallet's own network setting cannot send a test transaction the wrong way.
+
+A devnet machine is never listed and has no project page. Copy its address from the console into `pools.devnet.json` and pull from it locally. NFW settles draws on a devnet machine for its first seven days; make a new one when that runs out.
+
 ## Going to mainnet
 
 ```bash

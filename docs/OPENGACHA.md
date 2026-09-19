@@ -139,6 +139,12 @@ With no settings the storefront runs on Solana devnet and sells `pools.devnet.js
 
 Devnet reads go to Solana's public devnet endpoint, or to `DEVNET_RPC_URL` if you set one; `RPC_URL` is never used on devnet, so a mainnet key cannot end up serving test traffic. Explorer links land on devnet. When your flow works, set `NEXT_PUBLIC_CLUSTER=mainnet`, put your pool in `pools.json`, and ship.
 
+### Your own machine on devnet
+
+The wizard and the console run on devnet too. Open [opengacha.io/create?cluster=devnet](https://www.opengacha.io/create?cluster=devnet) (or press Switch to devnet on the Create page): the header shows a Devnet badge, and everything you do until you press it again happens on devnet. Launch a machine with faucet SOL, paste the address of your own devnet collection into the whitelist, and stock it from the console exactly as you will on mainnet. Your wallet only signs there; the site submits to devnet, so the wallet's own network setting cannot send a test transaction the wrong way.
+
+A devnet machine is never listed and has no project page. Copy its address from the console into `pools.devnet.json` and pull from it locally. NFW settles draws on a devnet machine for its first seven days; make a new one when that runs out.
+
 ### Where the chain code lives
 
 `lib/gacha` is the client, and every account list in it mirrors the program's instruction structs (the IDL, served at opengacha.io `/api/idl`) and the lists your API & SDK tab prints for your pool. `accounts.ts` reads the pool, positions and requests; `price.ts` is the price arithmetic; `pull.ts` is `requestPull → waitForDraw → drawnCards → resolve` with keep, cash out and relist; `positions.ts` is the depositor's side: admitted collections, bounds, what the wallet holds, deposit, withdraw, claim, earnings; `wallet.ts` is one shared wallet store and one send routine (simulate first, sign and send through the wallet, confirm, ask the ledger before believing a timeout).
