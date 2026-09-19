@@ -35,6 +35,8 @@ import {
   type TransactionInstruction,
 } from "@solana/web3.js";
 
+import { IS_DEVNET } from "@/lib/cluster";
+
 import { chain } from "./program";
 
 interface Provider {
@@ -182,6 +184,15 @@ function programError(logs: string[] | null | undefined): string | null {
 }
 
 /**
+ * Who submits. On mainnet the wallet does, when it can: that is the path
+ * Phantom can guard. On devnet the wallet only signs and the site submits:
+ * a wallet submits on whatever network IT is set to, so a tester whose
+ * wallet is still on mainnet would get the wallet's own "Unexpected error"
+ * for a devnet blockhash it has never seen.
+ */
+const walletSubmits = (w: Provider): boolean => !IS_DEVNET && typeof w.signAndSendTransaction === "function";
+
+/**
  * Sign and send `instructions` as one transaction from `payer`, wait for
  * confirmation, return the signature.
  */
@@ -214,8 +225,8 @@ export async function sendWithWallet(
 
   // 2. Send through the wallet when it can, else sign and submit ourselves.
   let signature: string;
-  if (typeof w.signAndSendTransaction === "function") {
-    signature = (await w.signAndSendTransaction(tx)).signature;
+  if (walletSubmits(w)) {
+    signature = (await w.signAndSendTransaction!(tx)).signature;
   } else {
     const signed = await w.signTransaction(tx);
     signature = await connection.sendRawTransaction(signed.serialize(), { skipPreflight: true, maxRetries: 3 });
@@ -262,8 +273,8 @@ export async function sendVersionedWithWallet(
   }
 
   let signature: string;
-  if (typeof w.signAndSendTransaction === "function") {
-    signature = (await w.signAndSendTransaction(tx)).signature;
+  if (walletSubmits(w)) {
+    signature = (await w.signAndSendTransaction!(tx)).signature;
   } else {
     const signed = await w.signTransaction(tx);
     signature = await connection.sendRawTransaction(signed.serialize(), { skipPreflight: true, maxRetries: 3 });
